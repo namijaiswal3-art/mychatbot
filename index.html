@@ -1,484 +1,87 @@
-
 <!DOCTYPE html>
 <html lang="hi">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Nova AI Chatbot</title>
-
+<title>Nova AI — GPT Chatbot</title>
 <style>
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-:root {
-  --bg: #0b1020;
-  --panel: #11182b;
-  --bubble: #202b43;
-  --border: #2b3955;
-  --purple: #6658ed;
-  --text: #f5f7ff;
-  --muted: #9caaca;
-}
-
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: Arial, sans-serif;
-  min-height: 100vh;
-  padding: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.app {
-  width: 100%;
-  max-width: 950px;
-  height: 96vh;
-  height: 96dvh;
-  min-height: 500px;
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 21px;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-header {
-  display: flex;
-  align-items: center;
-  gap: 13px;
-  padding: 18px 22px;
-  border-bottom: 1px solid var(--border);
-}
-
-.logo {
-  width: 45px;
-  height: 45px;
-  flex-shrink: 0;
-  border-radius: 14px;
-  background: linear-gradient(135deg, #8b5cf6, #4f46e5);
-  display: grid;
-  place-items: center;
-  font-size: 28px;
-}
-
-.brand {
-  flex: 1;
-}
-
-.brand h1 {
-  font-size: 21px;
-  margin-bottom: 5px;
-}
-
-.brand p {
-  color: #b4c1df;
-  font-size: 12px;
-}
-
-.green {
-  color: #4ade80;
-}
-
-.settings-btn {
-  background: #202b43;
-  color: white;
-  border: 1px solid #394763;
-  border-radius: 12px;
-  padding: 11px 13px;
-  cursor: pointer;
-  font-size: 14px;
-}
-
-.settings-btn:hover {
-  background: #303d59;
-}
-
-#settings {
-  display: none;
-  padding: 16px;
-  border-bottom: 1px solid var(--border);
-  background: #151e33;
-}
-
-#settings.open {
-  display: block;
-}
-
-#settings h3 {
-  font-size: 16px;
-  margin-bottom: 8px;
-}
-
-.help {
-  font-size: 12px;
-  color: var(--muted);
-  line-height: 1.6;
-  margin-bottom: 12px;
-}
-
-.key-row {
-  display: flex;
-  gap: 8px;
-}
-
-#apiKey {
-  flex: 1;
-  width: 100%;
-  min-width: 0;
-  padding: 12px;
-  background: #0d1528;
-  color: white;
-  border: 1px solid #3a4969;
-  border-radius: 11px;
-  outline: none;
-  font-size: 14px;
-}
-
-#apiKey:focus {
-  border-color: #8b7cff;
-}
-
-.small-btn {
-  background: #293650;
-  color: white;
-  border: 1px solid #465574;
-  padding: 10px 12px;
-  border-radius: 10px;
-  cursor: pointer;
-}
-
-#saveKey {
-  background: var(--purple);
-  border: none;
-  padding: 11px 16px;
-  border-radius: 10px;
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-  margin-top: 10px;
-}
-
-#removeKey {
-  background: transparent;
-  color: #ffaaaa;
-  border: 1px solid #70434c;
-  padding: 10px 12px;
-  border-radius: 10px;
-  cursor: pointer;
-  margin-top: 10px;
-  margin-left: 6px;
-}
-
-#keyStatus {
-  color: var(--muted);
-  font-size: 12px;
-  margin-top: 10px;
-}
-
-#chat {
-  flex: 1;
-  min-height: 0;
-  overflow-y: auto;
-  padding: 22px 18px;
-  scroll-behavior: smooth;
-}
-
-.welcome {
-  max-width: 500px;
-  margin: 50px auto 36px;
-  text-align: center;
-}
-
-.big-star {
-  font-size: 48px;
-  margin-bottom: 22px;
-}
-
-.welcome h2 {
-  font-size: 27px;
-  margin-bottom: 12px;
-}
-
-.welcome p {
-  color: #a9b8d8;
-  line-height: 1.65;
-}
-
-.message {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  margin: 17px 0;
-}
-
-.message.user {
-  flex-direction: row-reverse;
-}
-
-.avatar {
-  width: 35px;
-  height: 35px;
-  flex-shrink: 0;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
-  background: #293653;
-}
-
-.user .avatar {
-  background: var(--purple);
-}
-
-.bubble {
-  max-width: 84%;
-  padding: 13px 16px;
-  line-height: 1.65;
-  overflow-wrap: anywhere;
-  white-space: pre-wrap;
-  border: 1px solid #30405d;
-  border-radius: 16px;
-  background: var(--bubble);
-}
-
-.user .bubble {
-  background: var(--purple);
-  border-color: var(--purple);
-}
-
-.suggestions {
-  display: flex;
-  gap: 9px;
-  padding: 12px 16px;
-  overflow-x: auto;
-  border-top: 0 solid var(--border);
-}
-
-.suggestion {
-  flex-shrink: 0;
-  padding: 10px 13px;
-  color: #e4eaff;
-  background: #1b263d;
-  border: 1px solid #35445f;
-  border-radius: 22px;
-  cursor: pointer;
-}
-
-.suggestion:hover {
-  background: #303c58;
-}
-
-form {
-  display: flex;
-  gap: 10px;
-  padding: 14px 16px;
-  border-top: 1px solid var(--border);
-}
-
-#prompt {
-  flex: 1;
-  min-width: 0;
-  resize: none;
-  max-height: 140px;
-  min-height: 44px;
-  padding: 12px 14px;
-  border-radius: 13px;
-  background: #202b43;
-  color: white;
-  border: 1px solid #4c4baf;
-  outline: none;
-  font-family: inherit;
-  font-size: 15px;
-  line-height: 1.5;
-}
-
-#prompt::placeholder {
-  color: #a0acc5;
-}
-
-#send {
-  min-width: 52px;
-  padding: 0 16px;
-  border: none;
-  border-radius: 14px;
-  background: var(--purple);
-  color: white;
-  font-size: 23px;
-  cursor: pointer;
-}
-
-#send:disabled {
-  opacity: 0.5;
-  cursor: wait;
-}
-
-.footer {
-  text-align: center;
-  color: #8795b0;
-  font-size: 11px;
-  padding: 0 12px 12px;
-}
-
-@media (max-width: 600px) {
-  body {
-    padding: 0;
-  }
-
-  .app {
-    height: 100vh;
-    height: 100dvh;
-    min-height: 0;
-    border-radius: 0;
-    border: none;
-  }
-
-  header {
-    padding: 13px;
-  }
-
-  .brand h1 {
-    font-size: 18px;
-  }
-
-  .settings-btn {
-    padding: 10px;
-  }
-
-  #chat {
-    padding: 15px 12px;
-  }
-
-  .welcome {
-    margin-top: 38px;
-  }
-
-  .welcome h2 {
-    font-size: 24px;
-  }
-
-  .bubble {
-    max-width: 88%;
-    padding: 11px 13px;
-  }
-
-  .suggestions {
-    padding: 10px;
-  }
-
-  form {
-    padding: 10px;
-  }
-
-  #removeKey {
-    margin-left: 0;
-  }
-}
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0b1020;--panel:#11182b;--bubble:#202b43;--border:#2b3955;--purple:#6658ed;--text:#f5f7ff;--muted:#9caaca}
+body{background:var(--bg);color:var(--text);font-family:Arial,sans-serif;min-height:100vh;padding:10px;display:flex;align-items:center;justify-content:center}
+.app{width:100%;max-width:950px;height:96vh;height:96dvh;min-height:500px;background:var(--panel);border:1px solid var(--border);border-radius:21px;display:flex;flex-direction:column;overflow:hidden}
+header{display:flex;align-items:center;gap:13px;padding:18px 22px;border-bottom:1px solid var(--border)}
+.logo{width:45px;height:45px;flex-shrink:0;border-radius:14px;background:linear-gradient(135deg,#8b5cf6,#4f46e5);display:grid;place-items:center;font-size:28px}
+.brand{flex:1}.brand h1{font-size:21px;margin-bottom:5px}.brand p{color:#b4c1df;font-size:12px}.green{color:#4ade80}
+.settings-btn{background:#202b43;color:white;border:1px solid #394763;border-radius:12px;padding:11px 13px;cursor:pointer;font-size:14px}
+#settings{display:none;padding:16px;border-bottom:1px solid var(--border);background:#151e33}#settings.open{display:block}
+#settings h3{font-size:16px;margin-bottom:8px}.help{font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:12px}
+.key-row{display:flex;gap:8px}#apiKey{flex:1;width:100%;min-width:0;padding:12px;background:#0d1528;color:white;border:1px solid #3a4969;border-radius:11px;outline:none;font-size:14px}
+.small-btn,#saveKey,#removeKey{cursor:pointer;border-radius:10px;padding:10px 12px}
+.small-btn{background:#293650;color:white;border:1px solid #465574}
+#saveKey{background:var(--purple);border:none;padding:11px 16px;color:white;font-weight:bold;margin-top:10px}
+#removeKey{background:transparent;color:#ffaaaa;border:1px solid #70434c;margin-top:10px;margin-left:6px}
+#keyStatus{color:var(--muted);font-size:12px;margin-top:10px}
+#chat{flex:1;min-height:0;overflow-y:auto;padding:22px 18px;scroll-behavior:smooth}
+.welcome{max-width:500px;margin:50px auto 36px;text-align:center}.big-star{font-size:48px;margin-bottom:22px}.welcome h2{font-size:27px;margin-bottom:12px}.welcome p{color:#a9b8d8;line-height:1.65}
+.message{display:flex;align-items:flex-start;gap:10px;margin:17px 0}.message.user{flex-direction:row-reverse}
+.avatar{width:35px;height:35px;flex-shrink:0;border-radius:50%;display:grid;place-items:center;background:#293653}.user .avatar{background:var(--purple)}
+.bubble{max-width:84%;padding:13px 16px;line-height:1.65;overflow-wrap:anywhere;white-space:pre-wrap;border:1px solid #30405d;border-radius:16px;background:var(--bubble)}
+.user .bubble{background:var(--purple);border-color:var(--purple)}
+.suggestions{display:flex;gap:9px;padding:12px 16px;overflow-x:auto}
+.suggestion{flex-shrink:0;padding:10px 13px;color:#e4eaff;background:#1b263d;border:1px solid #35445f;border-radius:22px;cursor:pointer}
+form{display:flex;gap:10px;padding:14px 16px;border-top:1px solid var(--border)}
+#prompt{flex:1;min-width:0;resize:none;max-height:140px;min-height:44px;padding:12px 14px;border-radius:13px;background:#202b43;color:white;border:1px solid #4c4baf;outline:none;font-family:inherit;font-size:15px;line-height:1.5}
+#prompt::placeholder{color:#a0acc5}#send{min-width:52px;padding:0 16px;border:none;border-radius:14px;background:var(--purple);color:white;font-size:23px;cursor:pointer}#send:disabled{opacity:.5;cursor:wait}
+.footer{text-align:center;color:#8795b0;font-size:11px;padding:0 12px 12px}
+@media(max-width:600px){body{padding:0}.app{height:100vh;height:100dvh;min-height:0;border-radius:0;border:none}header{padding:13px}.brand h1{font-size:18px}.settings-btn{padding:10px}#chat{padding:15px 12px}.welcome{margin-top:38px}.welcome h2{font-size:24px}.bubble{max-width:88%;padding:11px 13px}.suggestions{padding:10px}form{padding:10px}#removeKey{margin-left:0}}
 </style>
 </head>
-
 <body>
 <div class="app">
-
   <header>
     <div class="logo">✦</div>
-
-    <div class="brand">
-      <h1>Nova AI</h1>
-      <p><span class="green">●</span> AI Assistant · Powered by Groq</p>
-    </div>
-
-    <button class="settings-btn" id="settingsBtn" type="button">
-      ⚙ API Key
-    </button>
+    <div class="brand"><h1>Nova AI</h1><p><span class="green">●</span> GPT Assistant · Powered by OpenAI</p></div>
+    <button class="settings-btn" id="settingsBtn" type="button">⚙ API Key</button>
   </header>
 
   <section id="settings">
-    <h3>🔑 Groq API Key सेटिंग</h3>
-
-    <p class="help">
-      अपनी Groq API key यहाँ डालें। इसे GitHub के HTML कोड में नहीं लिखा गया है।
-      इस विकल्प में key केवल इस ब्राउज़र की session memory में रखी जाएगी।
-      पेज बंद करने पर इसे दोबारा डालना पड़ सकता है।
-    </p>
-
+    <h3>🔑 OpenAI API Key सेटिंग</h3>
+    <p class="help">अपनी OpenAI API key यहाँ डालें। यह पेज इसे स्थायी रूप से सेव नहीं करता। ध्यान दें: ब्राउज़र से API कॉल करने पर key नेटवर्क अनुरोधों में दिखाई दे सकती है। सार्वजनिक वेबसाइट के लिए सुरक्षित backend इस्तेमाल करें। API usage के लिए बिलिंग/क्रेडिट की आवश्यकता हो सकती है।</p>
     <div class="key-row">
-      <input
-        id="apiKey"
-        type="password"
-        placeholder="gsk_... अपनी API key डालें"
-        autocomplete="off"
-        spellcheck="false"
-        aria-label="Groq API Key"
-      >
-
-      <button class="small-btn" id="toggleKey" type="button">
-        दिखाएँ
-      </button>
+      <input id="apiKey" type="password" placeholder="sk-... अपनी OpenAI API key डालें" autocomplete="off" spellcheck="false" aria-label="OpenAI API Key">
+      <button class="small-btn" id="toggleKey" type="button">दिखाएँ</button>
     </div>
-
     <button id="saveKey" type="button">✓ Key इस्तेमाल करें</button>
     <button id="removeKey" type="button">Key हटाएँ</button>
-
     <p id="keyStatus">अभी API key सेट नहीं है।</p>
   </section>
 
   <main id="chat">
     <div class="welcome" id="welcome">
-      <div class="big-star">✦</div>
-      <h2>नमस्ते! 👋</h2>
-      <p>
-        मैं Nova AI हूँ। मुझसे कुछ भी पूछो।
-        मैं तुम्हारी पढ़ाई, Python, विज्ञान और दूसरे सवालों में मदद कर सकता हूँ।
-        शुरू करने के लिए ऊपर API Key बटन दबाओ।
-      </p>
+      <div class="big-star">✦</div><h2>नमस्ते! 👋</h2>
+      <p>मैं Nova AI हूँ। मुझसे कुछ भी पूछो। मैं तुम्हारी पढ़ाई, Python, विज्ञान और दूसरे सवालों में मदद कर सकता हूँ। शुरू करने के लिए ऊपर API Key बटन दबाओ।</p>
     </div>
   </main>
 
   <div class="suggestions">
-    <button class="suggestion" data-question="Python क्या है?" type="button">
-      🐍 Python क्या है?
-    </button>
-
-    <button class="suggestion" data-question="मुझे एक कहानी सुनाओ" type="button">
-      📖 एक कहानी सुनाओ
-    </button>
-
-    <button class="suggestion" data-question="Artificial Intelligence क्या है?" type="button">
-      🤖 AI क्या है?
-    </button>
+    <button class="suggestion" data-question="Python क्या है?" type="button">🐍 Python क्या है?</button>
+    <button class="suggestion" data-question="मुझे एक कहानी सुनाओ" type="button">📖 एक कहानी सुनाओ</button>
+    <button class="suggestion" data-question="Artificial Intelligence क्या है?" type="button">🤖 AI क्या है?</button>
   </div>
 
   <form id="chatForm">
-    <textarea
-      id="prompt"
-      rows="1"
-      placeholder="अपना सवाल लिखें..."
-      aria-label="अपना सवाल लिखें"
-      required
-    ></textarea>
-
+    <textarea id="prompt" rows="1" placeholder="अपना सवाल लिखें..." aria-label="अपना सवाल लिखें" required></textarea>
     <button id="send" type="submit" aria-label="भेजें">➤</button>
   </form>
-
-  <div class="footer">
-    Nova AI के जवाब गलत हो सकते हैं। जरूरी जानकारी जाँच लें।
-  </div>
-
+  <div class="footer">Nova AI के जवाब गलत हो सकते हैं। जरूरी जानकारी जाँच लें।</div>
 </div>
 
 <script>
-const GROQ_ENDPOINT =
-  "https://api.groq.com/openai/v1/chat/completions";
+const OPENAI_ENDPOINT = "https://api.openai.com/v1/chat/completions";
+const MODEL = "gpt-4.1-mini";
 
-// API key केवल वर्तमान पेज की memory में रखी जाती है।
-let groqApiKey = "";
-
-const MODEL = "llama-3.3-70b-versatile";
+// API key केवल इस पेज के चलने तक memory में रहती है।
+let openaiApiKey = "";
 
 const chat = document.getElementById("chat");
 const welcome = document.getElementById("welcome");
@@ -488,51 +91,37 @@ const sendButton = document.getElementById("send");
 const apiKeyInput = document.getElementById("apiKey");
 const keyStatus = document.getElementById("keyStatus");
 const settings = document.getElementById("settings");
-
 const messages = [];
 
 document.getElementById("settingsBtn").addEventListener("click", () => {
   settings.classList.toggle("open");
-
-  if (settings.classList.contains("open")) {
-    apiKeyInput.focus();
-  }
+  if (settings.classList.contains("open")) apiKeyInput.focus();
 });
 
 document.getElementById("toggleKey").addEventListener("click", () => {
-  const isPassword = apiKeyInput.type === "password";
-
-  apiKeyInput.type = isPassword ? "text" : "password";
-
-  document.getElementById("toggleKey").textContent =
-    isPassword ? "छिपाएँ" : "दिखाएँ";
+  const show = apiKeyInput.type === "password";
+  apiKeyInput.type = show ? "text" : "password";
+  document.getElementById("toggleKey").textContent = show ? "छिपाएँ" : "दिखाएँ";
 });
 
 document.getElementById("saveKey").addEventListener("click", () => {
   const key = apiKeyInput.value.trim();
-
   if (!key) {
-    keyStatus.textContent = "पहले API key डालें।";
+    keyStatus.textContent = "पहले OpenAI API key डालें।";
     return;
   }
-
-  if (!key.startsWith("gsk_")) {
-    keyStatus.textContent =
-      "API key का प्रारूप सही नहीं लग रहा। अपनी Groq key जाँचें।";
+  if (!key.startsWith("sk-")) {
+    keyStatus.textContent = "यह OpenAI API key जैसी नहीं लग रही। अपनी key जाँचें।";
     return;
   }
-
-  groqApiKey = key;
+  openaiApiKey = key;
   apiKeyInput.value = "";
-
-  keyStatus.textContent =
-    "✓ API key इस पेज की memory में सेट हो गई है।";
-
+  keyStatus.textContent = "✓ API key इस पेज की memory में सेट हो गई है।";
   settings.classList.remove("open");
 });
 
 document.getElementById("removeKey").addEventListener("click", () => {
-  groqApiKey = "";
+  openaiApiKey = "";
   apiKeyInput.value = "";
   keyStatus.textContent = "API key हटा दी गई है।";
 });
@@ -540,74 +129,52 @@ document.getElementById("removeKey").addEventListener("click", () => {
 function addMessage(text, role) {
   const row = document.createElement("div");
   row.className = "message " + role;
-
   const avatar = document.createElement("div");
   avatar.className = "avatar";
   avatar.textContent = role === "user" ? "🙂" : "✦";
-
   const bubble = document.createElement("div");
   bubble.className = "bubble";
-
-  // जवाब को plain text के रूप में दिखाते हैं।
-  // इससे API के जवाब से HTML/JavaScript execute नहीं होता।
+  // Plain text के रूप में दिखाने से जवाब में HTML/JavaScript execute नहीं होगा।
   bubble.textContent = text;
-
   row.appendChild(avatar);
   row.appendChild(bubble);
   chat.appendChild(row);
-
   chat.scrollTop = chat.scrollHeight;
-
   return bubble;
 }
 
 async function sendMessage(text) {
   text = text.trim();
-
   if (!text || sendButton.disabled) return;
 
-  if (!groqApiKey) {
+  if (!openaiApiKey) {
     settings.classList.add("open");
-    keyStatus.textContent =
-      "पहले अपनी Groq API key डालकर 'Key इस्तेमाल करें' दबाएँ।";
+    keyStatus.textContent = "पहले OpenAI API key डालकर 'Key इस्तेमाल करें' दबाएँ।";
     apiKeyInput.focus();
     return;
   }
 
-  if (welcome && welcome.isConnected) {
-    welcome.remove();
-  }
-
+  if (welcome && welcome.isConnected) welcome.remove();
   addMessage(text, "user");
-
-  messages.push({
-    role: "user",
-    content: text
-  });
-
+  messages.push({ role: "user", content: text });
   promptBox.value = "";
   promptBox.style.height = "auto";
   sendButton.disabled = true;
-
-  const loading = addMessage("जवाब लिखा जा रहा है...", "assistant");
+  const loading = addMessage("GPT जवाब लिख रहा है...", "assistant");
 
   try {
-    const response = await fetch(GROQ_ENDPOINT, {
+    const response = await fetch(OPENAI_ENDPOINT, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": "Bearer " + groqApiKey
+        "Authorization": "Bearer " + openaiApiKey
       },
       body: JSON.stringify({
         model: MODEL,
         messages: [
           {
             role: "system",
-            content:
-              "You are Nova AI, a helpful and friendly assistant. " +
-              "Answer in the language used by the user. " +
-              "If the user writes in Hindi, answer in simple Hindi. " +
-              "Explain school subjects in an easy way."
+            content: "You are Nova AI, a helpful and friendly assistant. Answer in the language used by the user. If the user writes in Hindi, answer in simple Hindi. Explain school subjects in an easy way."
           },
           ...messages.slice(-20)
         ],
@@ -617,42 +184,23 @@ async function sendMessage(text) {
     });
 
     const data = await response.json();
-
     if (!response.ok) {
-      const apiError =
-        data.error && data.error.message
-          ? data.error.message
-          : "HTTP " + response.status;
-
+      const apiError = data.error && data.error.message
+        ? data.error.message
+        : "HTTP " + response.status;
       throw new Error(apiError);
     }
 
     const answer = data.choices?.[0]?.message?.content;
-
-    if (!answer) {
-      throw new Error("AI से कोई जवाब नहीं मिला।");
-    }
-
+    if (!answer) throw new Error("GPT से कोई जवाब नहीं मिला।");
     loading.textContent = answer;
-
-    messages.push({
-      role: "assistant",
-      content: answer
-    });
-
+    messages.push({ role: "assistant", content: answer });
   } catch (error) {
     loading.textContent =
-      "माफ़ करना! जवाब नहीं मिल सका।\n\n" +
-      "Error: " + error.message +
-      "\n\nAPI key, internet connection, model availability और Groq की limits जाँचें।";
-
-    // असफल सवाल को conversation history में न रखें।
+      "माफ़ करना! जवाब नहीं मिल सका।\n\nError: " + error.message +
+      "\n\nAPI key, OpenAI API billing/limits, model access और browser/network restrictions जाँचें।";
     const last = messages[messages.length - 1];
-
-    if (last && last.role === "user") {
-      messages.pop();
-    }
-
+    if (last && last.role === "user") messages.pop();
   } finally {
     sendButton.disabled = false;
     promptBox.focus();
@@ -674,16 +222,12 @@ promptBox.addEventListener("keydown", event => {
 
 promptBox.addEventListener("input", () => {
   promptBox.style.height = "auto";
-  promptBox.style.height =
-    Math.min(promptBox.scrollHeight, 140) + "px";
+  promptBox.style.height = Math.min(promptBox.scrollHeight, 140) + "px";
 });
 
 document.querySelectorAll("[data-question]").forEach(button => {
-  button.addEventListener("click", () => {
-    sendMessage(button.dataset.question);
-  });
+  button.addEventListener("click", () => sendMessage(button.dataset.question));
 });
 </script>
-
 </body>
 </html>
